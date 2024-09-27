@@ -18,7 +18,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo dnf update -y
-          sudo dnf dnf clean packages -y
+          sudo dnf clean packages -y
           sudo dnf install -y wget git curl
 
       - name: Execute Command
