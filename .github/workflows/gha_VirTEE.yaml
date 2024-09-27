@@ -17,8 +17,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          sudo apt update
-          sudo apt install -y wget git curl
+          sudo dnf update
+          sudo dnf install -y wget git curl
 
       - name: Execute Command
         run: |
