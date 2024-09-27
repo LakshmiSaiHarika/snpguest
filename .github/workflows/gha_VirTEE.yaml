@@ -1,0 +1,102 @@
+name: SNP Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Specify the command to execute'
+        required: true
+        default: 'install-snp-on-the-host'
+
+jobs:
+  snp_tests:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y wget git curl
+
+      - name: Execute Command
+        run: |
+          case "${{ github.event.inputs.command }}" in
+            install-snp-on-the-host)
+              echo "Installing SNP on the host..."
+              wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
+              chmod +x snp.sh
+              ./snp.sh setup-host
+              echo "The host must be rebooted for changes to take effect."
+              ;;
+
+            reboot-host)
+              echo "Rebooting the host..."
+              sudo reboot
+              ;;
+
+            verify-snp-on-host)
+              echo "Verifying SNP on the host..."
+              if ! sudo dmesg | grep -i "SEV-SNP enabled" 2>&1 >/dev/null; then
+                echo "SEV-SNP not enabled on the host."
+                exit 1
+              fi
+              echo "SEV-SNP is enabled on the host."
+              ;;
+
+            test-sev-on-host)
+              echo "Testing SEV on the host..."
+              sudo git clone https://github.com/virtee/sev.git
+              cd sev
+              source "${HOME}/.cargo/env" 2>/dev/null || true
+              if ! command -v rustc &> /dev/null; then
+                echo "Installing Rust..."
+                sudo apt install -y cargo
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
+                source "${HOME}/.cargo/env" 2>/dev/null
+              fi
+              sudo cargo test -- --skip snp
+              ;;
+
+            test-sev-on-guest)
+              echo "Testing SEV on the guest..."
+              wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
+              chmod +x snp.sh
+              ./snp.sh launch-guest
+              
+              # SSH guest commands
+              GUEST_SSH_KEY_PATH="${HOME}/snp/launch/snp-guest-key"
+              if [ ! -f "${GUEST_SSH_KEY_PATH}" ]; then
+                echo "SSH key not present, cannot verify guest SNP enabled."
+                exit 1
+              fi
+
+              ssh_guest_command() {
+                command="$1"
+                ssh -p 10022 -i "${GUEST_SSH_KEY_PATH}" -o "StrictHostKeyChecking no" -o "PasswordAuthentication=no" -o ConnectTimeout=1 amd@localhost "${command}"
+              }
+
+              verify_snp_guest() {
+                local snp_enabled=$(ssh_guest_command "sudo dmesg | grep 'Memory Encryption Features active:.*SEV-SNP'")
+                if [[ -n "${snp_enabled}" ]]; then
+                  echo "SNP is Enabled"
+                else
+                  echo "SNP is NOT Enabled"
+                  exit 1
+                fi
+              }
+              
+              verify_snp_guest
+              ssh_guest_command "sudo dnf update -y"
+              ssh_guest_command "sudo dnf install -y cargo git"
+              ssh_guest_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1"
+              ssh_guest_command "[ -d sev ] || git clone https://github.com/virtee/sev.git"
+              ssh_guest_command "cd sev && sudo cargo test"
+              ;;
+
+            *)
+              echo "Unsupported Command: [${{ github.event.inputs.command }}]"
+              exit 1
+              ;;
+          esac
