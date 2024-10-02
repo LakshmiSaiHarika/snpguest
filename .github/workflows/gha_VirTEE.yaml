@@ -90,7 +90,8 @@ jobs:
               
               verify_snp_guest
               ssh_guest_command "sudo dnf update -y"
-              ssh_guest_command "sudo dnf install -y cargo git"
+              # ssh_guest_command "sudo dnf install -y cargo git"
+              ssh_guest_command "sudo dnf install -y git"
               ssh_guest_command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1"
               ssh_guest_command "[ -d sev ] || git clone https://github.com/virtee/sev.git"
               ssh_guest_command "cd sev && sudo cargo test"
