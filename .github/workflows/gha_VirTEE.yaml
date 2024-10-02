@@ -15,11 +15,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
-        run: |
-          sudo dnf update -y
-          sudo dnf clean packages -y
-          sudo dnf install -y wget git curl
+      # - name: Install Dependencies
+      #   run: |
+      #     sudo dnf update -y
+      #     sudo dnf clean packages -y
+      #     sudo dnf install -y wget git curl
 
       - name: Execute Command
         run: |
