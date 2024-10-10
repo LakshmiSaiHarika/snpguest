@@ -63,7 +63,7 @@ jobs:
             test-sev-on-guest)
              echo $PWD
              realpath Virtee-SEV.sh
-            ./Virtee-SEV.sh test-sev-on-guest
+             $PWD/Virtee-SEV.sh test-sev-on-guest
 
             #   echo "Testing SEV on the guest..."
             #   wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
