@@ -91,11 +91,11 @@ jobs:
               verify_snp_guest
               
               # Install sev dependencies as a root user
-              ssh_guest_command "sudo su - <<EOF
-            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
-            source "${HOME}/.cargo/env" 2>/dev/null
-            sudo dnf install -y git gcc
-            EOF"
+              ssh_guest_command "sudo su - <<-'EOF'
+                curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
+                source "${HOME}/.cargo/env" 2>/dev/null
+                sudo dnf install -y git gcc
+              EOF"
             
               # Clone and test sev library as root user to fix OS permission denied issues
               ssh_guest_command "sudo su - <<EOF
