@@ -61,7 +61,8 @@ jobs:
               ;;
 
             test-sev-on-guest)
-            cat $PWD
+             echo $PWD
+             realpath Virtee-SEV.sh
             ./github/workflows/Virtee-SEV.sh
 
             #   echo "Testing SEV on the guest..."
