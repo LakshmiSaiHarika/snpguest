@@ -61,47 +61,48 @@ jobs:
               ;;
 
             test-sev-on-guest)
-              echo "Testing SEV on the guest..."
-              wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
-              chmod +x snp.sh
-              ./snp.sh launch-guest
+            ../Virtee-SEV.sh test-sev-on-guest
+            #   echo "Testing SEV on the guest..."
+            #   wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
+            #   chmod +x snp.sh
+            #   ./snp.sh launch-guest
               
-              # SSH guest commands
-              GUEST_SSH_KEY_PATH="${HOME}/snp/launch/snp-guest-key"
-              if [ ! -f "${GUEST_SSH_KEY_PATH}" ]; then
-                echo "SSH key not present, cannot verify guest SNP enabled."
-                exit 1
-              fi
+            #   # SSH guest commands
+            #   GUEST_SSH_KEY_PATH="${HOME}/snp/launch/snp-guest-key"
+            #   if [ ! -f "${GUEST_SSH_KEY_PATH}" ]; then
+            #     echo "SSH key not present, cannot verify guest SNP enabled."
+            #     exit 1
+            #   fi
 
-              ssh_guest_command() {
-                command="$1"
-                ssh -p 10022 -i "${GUEST_SSH_KEY_PATH}" -o "StrictHostKeyChecking no" -o "PasswordAuthentication=no" -o ConnectTimeout=1 amd@localhost "${command}"
-              }
+            #   ssh_guest_command() {
+            #     command="$1"
+            #     ssh -p 10022 -i "${GUEST_SSH_KEY_PATH}" -o "StrictHostKeyChecking no" -o "PasswordAuthentication=no" -o ConnectTimeout=1 amd@localhost "${command}"
+            #   }
 
-              verify_snp_guest() {
-                local snp_enabled=$(ssh_guest_command "sudo dmesg | grep 'Memory Encryption Features active:.*SEV-SNP'")
-                if [[ -n "${snp_enabled}" ]]; then
-                  echo "SNP is Enabled"
-                else
-                  echo "SNP is NOT Enabled"
-                  exit 1
-                fi
-              }
+            #   verify_snp_guest() {
+            #     local snp_enabled=$(ssh_guest_command "sudo dmesg | grep 'Memory Encryption Features active:.*SEV-SNP'")
+            #     if [[ -n "${snp_enabled}" ]]; then
+            #       echo "SNP is Enabled"
+            #     else
+            #       echo "SNP is NOT Enabled"
+            #       exit 1
+            #     fi
+            #   }
               
-              verify_snp_guest
+            #   verify_snp_guest
               
-              # Install sev dependencies as a root user
-              ssh_guest_command "sudo su - <<EOF
-            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
-            source "${HOME}/.cargo/env" 2>/dev/null
-            sudo dnf install -y git gcc
-            EOF"
+            #   # Install sev dependencies as a root user
+            #   ssh_guest_command "sudo su - <<EOF
+            # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
+            # source "${HOME}/.cargo/env" 2>/dev/null
+            # sudo dnf install -y git gcc
+            # EOF"
             
-              # Clone and test sev library as root user to fix OS permission denied issues
-              ssh_guest_command "sudo su - <<EOF
-            git clone https://github.com/virtee/sev.git
-            cd ~/sev && cargo test
-            EOF"
+            #   # Clone and test sev library as root user to fix OS permission denied issues
+            #   ssh_guest_command "sudo su - <<EOF
+            # git clone https://github.com/virtee/sev.git
+            # cd ~/sev && cargo test
+            # EOF"
               ;;
 
             *)
