@@ -62,8 +62,8 @@ jobs:
 
             test-sev-on-guest)
               echo "Testing SEV on the guest..."
-              # wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
-              # chmod +x snp.sh
+              wget https://raw.githubusercontent.com/LakshmiSaiHarika/sev-utils/Fedora-Latest-SNP-kernel-Upstream/tools/snp.sh
+              chmod +x snp.sh
               ./snp.sh launch-guest
               
               # SSH guest commands
