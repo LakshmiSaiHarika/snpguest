@@ -48,15 +48,21 @@ jobs:
 
             test-sev-on-host)
               echo "Testing SEV on the host..."
-              sudo git clone https://github.com/virtee/sev.git
+              
+              # Give user access to /dev/sev to run cargo tests w/o permission issues  
+              sudo usermod -a -G kvm virtee
+              sudo setfacl -m g:kvm:rw /dev/sev
+
+              git clone https://github.com/virtee/sev.git
               cd sev
               source "${HOME}/.cargo/env" 2>/dev/null || true
+          
               if ! command -v rustc &> /dev/null; then
                 echo "Installing Rust..."
                 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
                 source "${HOME}/.cargo/env" 2>/dev/null
               fi
-              source "${HOME}/.cargo/env" 2>/dev/null
+            
               cargo test -- --skip snp
               ;;
 
