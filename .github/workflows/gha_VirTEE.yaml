@@ -57,7 +57,7 @@ jobs:
                 source "${HOME}/.cargo/env" 2>/dev/null
               fi
               source "${HOME}/.cargo/env" 2>/dev/null
-              sudo cargo test -- --skip snp
+              cargo test -- --skip snp
               ;;
 
             test-sev-on-guest)
