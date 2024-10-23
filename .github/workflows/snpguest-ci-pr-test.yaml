@@ -103,8 +103,8 @@ jobs:
            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -sSf | sh -s -- -y
            source "${HOME}/.cargo/env" 2>/dev/null
            sudo dnf install -y git gcc
-           sudo dnf groupinstall -y "Development Tools"
-           sudo dnf groupinstall -y "Development Libraries"
+           sudo dnf groupinstall -y "\Development Tools\"
+           sudo dnf groupinstall -y "\Development Libraries\"
            sudo dnf install -y pkgconf perl-FindBin perl-IPC-Cmd openssl-devel
           EOF"
 
