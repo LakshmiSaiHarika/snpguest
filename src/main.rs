@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // This is the main entry point of the snpguest utility. The CLI includes subcommands for requesting and managing certificates, displaying information, fetching derived keys, and verifying certificates and attestation reports.
 
+//comment
+
 mod certs;
 mod display;
 mod fetch;
