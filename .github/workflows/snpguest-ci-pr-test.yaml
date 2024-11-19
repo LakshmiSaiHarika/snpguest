@@ -17,7 +17,7 @@ on:
         required: true
 
 jobs:
-  host_firmware_tests:
+  host_check_snp:
     runs-on: self-hosted
     steps:
       - name: Checkout Repository
