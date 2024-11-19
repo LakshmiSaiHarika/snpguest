@@ -22,7 +22,7 @@ check_rust_on_host() {
 }
 
 ssh_guest_command() {
-    local guest_name=snp-guest-sev-$2
+    local guest_name="$2"
     local GUEST_SSH_KEY_PATH="${HOME}/snp/launch/${guest_name}/${guest_name}-key"
     if [ ! -f "${GUEST_SSH_KEY_PATH}" ]; then
       echo "SSH key not present, cannot verify guest SNP enabled."
@@ -34,6 +34,7 @@ ssh_guest_command() {
     ssh -p ${guest_port_in_use} -i "${GUEST_SSH_KEY_PATH}" -o "StrictHostKeyChecking no" -o "PasswordAuthentication=no" -o ConnectTimeout=1 amd@localhost "${command}"
   }
 
+# verify_snp_guest_msr CLI use: verify_snp_guest_msr "${guest_name}" "${guest_port_number}"
 verify_snp_guest_msr(){
   # Install guest rdmsr package dependencies to insert guest msr module
   ssh_guest_command "sudo dnf install -y msr-tools > /dev/null 2>&1" $1 $2> /dev/null 2>&1
