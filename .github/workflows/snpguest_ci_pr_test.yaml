@@ -121,7 +121,6 @@ jobs:
 
           # Perform PR test on snpguest tool as root user
           ssh_guest_command "sudo su - <<EOF
-          cd /home/root/
           git clone https://github.com/LakshmiSaiHarika/snpguest.git
           cd ./snpguest
 
